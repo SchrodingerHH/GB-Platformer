@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,36 +6,36 @@ public class SpriteController : IDisposable
 {
     private class Animation
     {
-        public Track Track;
-        public List<Sprite> Sprites;
-        public bool Loop = false;
-        public float Speed = 10;
-        public float Counter = 0;
-        public bool Sleeps;
+        public Track track;
+        public List<Sprite> sprites;
+        public bool loop = false;
+        public float speed = 10;
+        public float counter = 0;
+        public bool sleeps;
 
         public void Update()
         {
-            if (Sleeps) return;
-            Counter += Time.deltaTime * Speed;
-            if (Loop)
+            if (sleeps) return;
+            counter += Time.deltaTime * speed;
+            if (loop)
             {
-                while (Counter > Sprites.Count)
+                while (counter > sprites.Count)
                 {
-                    Counter -= Sprites.Count;
+                    counter -= sprites.Count;
                 }
             }
-            else if (Counter > Sprites.Count)
+            else if (counter > sprites.Count)
             {
-                Counter = Sprites.Count - 1;
-                Sleeps = true;
+                counter = sprites.Count - 1;
+                sleeps = true;
             }
         }
     }
 
-    private SpriteAnimationsConfig _config;
+    private SpriteAnimationConfig _config;
     private Dictionary<SpriteRenderer, Animation> _activeAnimations = new Dictionary<SpriteRenderer, Animation>();
 
-    public SpriteAnimator(SpriteAnimationsConfig config)
+    public SpriteController(SpriteAnimationConfig config)
     {
         _config = config;
     }
@@ -43,24 +44,24 @@ public class SpriteController : IDisposable
     {
         if (_activeAnimations.TryGetValue(spriteRenderer, out var animation))
         {
-            animation.Loop = loop;
-            animation.Speed = speed;
-            animation.Sleeps = false;
-            if (animation.Track != track)
+            animation.loop = loop;
+            animation.speed = speed;
+            animation.sleeps = false;
+            if (animation.track != track)
             {
-                animation.Track = track;
-                animation.Sprites = _config.Sequences.Find(sequence => sequence.Track == track).Sprites;
-                animation.Counter = 0;
+                animation.track = track;
+                animation.sprites = _config.Sequences.Find(sequence => sequence.Track == track).Sprites;
+                animation.counter = 0;
             }
         }
         else
         {
             _activeAnimations.Add(spriteRenderer, new Animation()
             {
-                Track = track,
-                Sprites = _config.Sequences.Find(sequence => sequence.Track == track).Sprites,
-                Loop = loop,
-                Speed = speed
+                track = track,
+                sprites = _config.Sequences.Find(sequence => sequence.Track == track).Sprites,
+                loop = loop,
+                speed = speed
             });
         }
     }
@@ -78,7 +79,7 @@ public class SpriteController : IDisposable
         foreach (var animation in _activeAnimations)
         {
             animation.Value.Update();
-            animation.Key.sprite = animation.Value.Sprites[(int)animation.Value.Counter];
+            animation.Key.sprite = animation.Value.sprites[(int)animation.Value.counter];
         }
     }
 

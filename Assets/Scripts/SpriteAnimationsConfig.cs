@@ -5,8 +5,8 @@ using UnityEngine;
 
 public enum Track
 {
-    sonic_walk,
-    sonic_jump
+    anim_walk,
+    anim_jump
 }
 
 [CreateAssetMenu(fileName = "SpriteAnimationConfig", menuName = "Configs/SpriteAnimationConfig", order = 1)]
